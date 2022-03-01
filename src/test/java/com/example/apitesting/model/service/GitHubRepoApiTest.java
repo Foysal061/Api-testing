@@ -1,13 +1,13 @@
-package service;
+package com.example.apitesting.model.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONException;
 import org.json.simple.JSONArray;
@@ -26,14 +26,14 @@ import static org.hamcrest.Matchers.equalTo;
 public class GitHubRepoApiTest {
     private final String repoName = "test";
     private final String githubName = "Foysal061";
-    private final String token = "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";
+    private final String token = "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";
 
     @Test
     public void acreateRepoSuccessful_then201IsReceived() throws IOException {
         CloseableHttpClient client = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost("https://api.github.com/user/repos");
         String json = "{\n" +
-                "        \"name\": \"" + repoName + "\", \n" +
+                "        \"name\": \"" + repoName + "\" " +
                 "      }";
         StringEntity entity = new StringEntity(json);
         httpPost.setEntity(entity);
@@ -54,10 +54,10 @@ public class GitHubRepoApiTest {
         JSONParser jsonParser = new JSONParser();
         Object obj = jsonParser.parse(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
         JSONArray jsonArray = (JSONArray) obj;
-        for (int i= 0; i<jsonArray.size();i++){
+        for (int i = 0; i < jsonArray.size(); i++) {
             Object object = jsonArray.get(i);
             JSONObject jsonObject = (JSONObject) JSONValue.parse(new ObjectMapper().writeValueAsString(object));
-            if(jsonObject.get("name").equals(repoName)){
+            if (jsonObject.get("name").equals(repoName)) {
                 assert true;
                 return;
             }
@@ -68,7 +68,7 @@ public class GitHubRepoApiTest {
     @Test
     public void cdeleteRepoSuccessful_then204IsReceived() throws IOException {
         CloseableHttpClient client = HttpClients.createDefault();
-        HttpDelete httpDelete = new HttpDelete("https://api.github.com/repos/"+githubName+"/"+repoName);
+        HttpDelete httpDelete = new HttpDelete("https://api.github.com/repos/" + githubName + "/" + repoName);
         httpDelete.setHeader("Accept", "application/json");
         httpDelete.setHeader("Authorization", "token " + token);
 
